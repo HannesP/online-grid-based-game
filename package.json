@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/HannesP/online-grid-based-game/issues"
   },
-  "homepage": "https://github.com/HannesP/online-grid-based-game#readme"
+  "homepage": "https://github.com/HannesP/online-grid-based-game#readme",
+  "dependencies": {
+    "websocket": "^1.0.24"
+  }
 }
