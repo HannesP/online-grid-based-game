@@ -1,9 +1,21 @@
 const Game = require('./game');
 
 class GameServer {
-    constructor(webSocketServer) {
+    constructor() {
         this.game = new Game();
         this.clients = [];
+        
+        this.handlers = {};
+        this.handlerTypes = [];
+        
+        this.handle('JOIN', this.handleJoin);
+        this.handle('TEST', this.handleTest);
+    }
+    
+    // Handlers of external events, triggered in server.js
+    
+    onConnect(client) {
+        this.clients.push(client);
     }
     
     onTextMessage(text, client) {
@@ -11,18 +23,54 @@ class GameServer {
         try {
             message = JSON.parse(text);
         } catch (e) {
-            // console.log('Invalid message from ' + conn.origin);
-            return;
+            client.disconnect();
+        }
+        
+        if (!('type' in message)) {
+            client.disconnect();
         }
         
         const type = message.type;
-        const payload = message.payload;
+        const payload = message.payload || {};
         
-        client.message('HELLO', {body: `Hi there, ${payload.name} in ${payload.location}!`});
+        if (this.handlerTypes.indexOf(type) != -1) {
+            this.handlers[type](payload, client);
+        } else {
+            client.disconnect();
+        }
     }
     
-    onClose(conn) {
+    onClose(client) {
+        const player = client.player;
+        if (player) {
+            this.game.removePlayer(player);
+        }
         
+        const i = this.clients.indexOf(client);
+        this.clients.splice(i, 1);
+    }
+    
+    // Message handlers
+    
+    handleJoin(payload, client) {
+        const name = payload.name;
+        if (!name) {
+            client.disconnect();
+            return;
+        }
+
+        client.player = this.game.addPlayer(name)
+    }
+    
+    handleTest(payload, client) {
+        client.disconnect();
+    }
+    
+    // Misc
+    
+    handle(type, handler) {
+        this.handlerTypes.push(type);
+        this.handlers[type] = handler.bind(this);
     }
 }
 

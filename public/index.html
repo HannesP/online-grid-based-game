@@ -4,14 +4,11 @@
     ws.onopen = function(e) {
         const msg = JSON.stringify({
             type: 'JOIN',
-            payload: {name: 'Hannes', location: 'Malmö'}
-        })
+            payload: {name: 'Hannes'}
+        });
+        
         ws.send(msg);
     };
-    
-    ws.onmessage = function(e) {
-        console.log(e.data);
-    }
 </script>
 
 <p>Hello world!</p>

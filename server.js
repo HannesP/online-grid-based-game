@@ -42,6 +42,7 @@ wsServer.on('request', (req) => {
     
     const conn = req.accept('ogbg-protocol', req.origin);
     const client = new GameClient(conn);
+    gameServer.onConnect(client);
     
     conn.on('message', (msg) => {
         if (msg.type == 'utf8') {
