@@ -1,4 +1,4 @@
-const game = require('./game');
+const Game = require('./game');
 
 class GameServer {
     constructor(webSocketServer) {
@@ -6,15 +6,22 @@ class GameServer {
         this.clients = [];
     }
     
-    onRequest() {
+    onTextMessage(text, client) {
+        let message;
+        try {
+            message = JSON.parse(text);
+        } catch (e) {
+            // console.log('Invalid message from ' + conn.origin);
+            return;
+        }
         
+        const type = message.type;
+        const payload = message.payload;
+        
+        client.message('HELLO', {body: `Hi there, ${payload.name} in ${payload.location}!`});
     }
     
-    onMessage() {
-        
-    }
-    
-    onClose() {
+    onClose(conn) {
         
     }
 }

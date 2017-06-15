@@ -5,6 +5,8 @@ const http = require('http');
 const express = require('express');
 
 const GameServer = require('./game-server');
+const GameClient = require('./game-client');
+
 const gameServer = new GameServer();
 
 const app = express();
@@ -14,48 +16,40 @@ app.listen(8081, () => { // -> 80
     console.log('Express Server listening on port 8081');
 }); 
  
-const server = http.createServer((req, response) => {
+const httpServer = http.createServer((req, response) => {
     console.log((new Date()) + ' Received req for ' + req.url);
     response.writeHead(404);
     response.end();
 });
 
-server.listen(8080, function() {
+httpServer.listen(8080, function() {
     console.log((new Date()) + ' Server is listening on port 8080');
 });
- 
+
 const wsServer = new WebSocketServer({
-    httpServer: server,
+    httpServer,
     autoAcceptConnections: false
 });
  
 function originIsAllowed(origin) {
     return true;
 }
- 
+
 wsServer.on('request', (req) => {
-    if (!originIsAllowed(reg.origin)) {
-        req.reject();
-        console.log((new Date()) + ' Connection from origin ' + req.origin + ' rejected.');
+    if (!originIsAllowed(req.origin)) {
         return;
     }
     
     const conn = req.accept('ogbg-protocol', req.origin);
-    console.log((new Date()) + ' Connection accepted.');
-    // game.onConnect(conn);
+    const client = new GameClient(conn);
     
     conn.on('message', (msg) => {
         if (msg.type == 'utf8') {
-            console.log('Received Message: ' + msg.utf8Data);
-            // gameContainer.handleInput(msg.utf8Data);
-            // conn.sendUTF(msg.utf8Data);
-        }/* else if (msg.type == 'binary') {
-            console.log('Received Binary Message of ' + msg.binaryData.length + ' bytes');
-            conn.sendBytes(msg.binaryData);
-        }*/
+            gameServer.onTextMessage(msg.utf8Data, client);
+        }
     });
     
     conn.on('close', function(reasonCode, description) {
-        console.log((new Date()) + ' Peer ' + conn.remoteAddress + ' disconnected.');
+        gameServer.onClose(client);
     });
-});
+})
