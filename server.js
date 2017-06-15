@@ -4,7 +4,8 @@ const WebSocketServer = require('websocket').server;
 const http = require('http');
 const express = require('express');
 
-const game = require('./game');
+const GameServer = require('./game-server');
+const gameServer = new GameServer();
 
 const app = express();
 app.use(express.static('public'))
@@ -46,7 +47,7 @@ wsServer.on('request', (req) => {
     conn.on('message', (msg) => {
         if (msg.type == 'utf8') {
             console.log('Received Message: ' + msg.utf8Data);
-            // game.onReceived(msg.utf8Data);
+            // gameContainer.handleInput(msg.utf8Data);
             // conn.sendUTF(msg.utf8Data);
         }/* else if (msg.type == 'binary') {
             console.log('Received Binary Message of ' + msg.binaryData.length + ' bytes');
