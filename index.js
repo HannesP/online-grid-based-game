@@ -4,8 +4,9 @@ const WebSocketServer = require('websocket').server;
 const http = require('http');
 const express = require('express');
 
-const app = express();
+const game = require('./game');
 
+const app = express();
 app.use(express.static('public'))
 
 app.listen(8081, () => { // -> 80
@@ -40,16 +41,17 @@ wsServer.on('request', (req) => {
     
     const conn = req.accept('ogbg-protocol', req.origin);
     console.log((new Date()) + ' Connection accepted.');
+    // game.onConnect(conn);
     
     conn.on('message', (msg) => {
         if (msg.type == 'utf8') {
             console.log('Received Message: ' + msg.utf8Data);
-            conn.sendUTF(msg.utf8Data);
-        }
-        else if (msg.type == 'binary') {
+            // game.onReceived(msg.utf8Data);
+            // conn.sendUTF(msg.utf8Data);
+        }/* else if (msg.type == 'binary') {
             console.log('Received Binary Message of ' + msg.binaryData.length + ' bytes');
             conn.sendBytes(msg.binaryData);
-        }
+        }*/
     });
     
     conn.on('close', function(reasonCode, description) {
