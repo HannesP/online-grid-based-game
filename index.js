@@ -8,14 +8,6 @@ const app = express();
 
 app.use(express.static('public'))
 
-//app.get('/', (req, res) => {
-//    res.sendFile('public/index.html');
-//});
-//
-//app.get(/^(.+)$/, (req, res) => {
-//    res.sendFile('public/' + req.params[0]);
-//});
-//
 app.listen(8081, () => { // -> 80
     console.log('Express Server listening on port 8081');
 }); 
