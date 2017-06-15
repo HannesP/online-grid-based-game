@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/HannesP/online-grid-based-game#readme",
   "dependencies": {
+    "express": "^4.15.3",
     "websocket": "^1.0.24"
   }
 }

@@ -2,6 +2,23 @@
 
 const WebSocketServer = require('websocket').server;
 const http = require('http');
+const express = require('express');
+
+const app = express();
+
+app.use(express.static('public'))
+
+//app.get('/', (req, res) => {
+//    res.sendFile('public/index.html');
+//});
+//
+//app.get(/^(.+)$/, (req, res) => {
+//    res.sendFile('public/' + req.params[0]);
+//});
+//
+app.listen(8081, () => { // -> 80
+    console.log('Express Server listening on port 8081');
+}); 
  
 const server = http.createServer((req, response) => {
     console.log((new Date()) + ' Received req for ' + req.url);
@@ -24,9 +41,9 @@ function originIsAllowed(origin) {
  
 wsServer.on('request', (req) => {
     if (!originIsAllowed(reg.origin)) {
-      req.reject();
-      console.log((new Date()) + ' Connection from origin ' + req.origin + ' rejected.');
-      return;
+        req.reject();
+        console.log((new Date()) + ' Connection from origin ' + req.origin + ' rejected.');
+        return;
     }
     
     const conn = req.accept('ogbg-protocol', req.origin);
@@ -42,6 +59,7 @@ wsServer.on('request', (req) => {
             conn.sendBytes(msg.binaryData);
         }
     });
+    
     conn.on('close', function(reasonCode, description) {
         console.log((new Date()) + ' Peer ' + conn.remoteAddress + ' disconnected.');
     });
