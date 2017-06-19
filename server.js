@@ -13,11 +13,11 @@ const appPort = 8081;
 const wsPort = 8080;
 
 const app = express();
-app.use(express.static('public'))
+app.use(express.static('public'));
 
 app.listen(appPort, () => {
     console.log(new Date() + ' Express Server listening on port ' + appPort);
-}); 
+});
  
 const httpServer = http.createServer((req, response) => {
     console.log(new Date() + ' Received req for ' + req.url);
