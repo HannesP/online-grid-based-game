@@ -8,8 +8,15 @@ class GameServer {
         this.handlers = {};
         this.handlerTypes = [];
         
+        this.setupHandlers();
+    }
+    
+    setupHandlers() {
         this.handle('JOIN', this.handleJoin);
-        this.handle('TEST', this.handleTest);
+        this.handle('TEST', this.handleTest);   
+        this.handle('MOVE_UP', this.handleMoveUp);
+        this.handle('MOVE_DOWN', this.handleMoveDown);
+        // etc
     }
     
     // Handlers of external events, triggered in server.js
@@ -50,7 +57,10 @@ class GameServer {
         this.clients.splice(i, 1);
     }
     
-    // Message handlers
+    // Message Handlers
+    // * The message handlers are set up in setupHandlers
+    // * No assumptions can be made about the contents of `payload`
+    // * Faulty payloads should result in disconnection of the client
     
     handleJoin(payload, client) {
         const name = payload.name;
@@ -64,6 +74,14 @@ class GameServer {
     
     handleTest(payload, client) {
         client.disconnect();
+    }
+    
+    handleMoveUp(payload, client) {
+        // this.game.moveUp(client.player);
+    }
+    
+    handleMoveDown(payload, client) {
+        // this.game.moveDown(client.player);
     }
     
     // Misc
